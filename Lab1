@@ -29,28 +29,19 @@ class DiscountCalculatorPage extends StatefulWidget {
 }
 
 class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
-  // Controller pentru prețul inițial
   final TextEditingController _priceController = TextEditingController();
-
-  // Controller pentru procentul de reducere introdus manual
   final TextEditingController _customDiscountController = TextEditingController();
 
-  // Opțiune predefinită selectată în Dropdown
   double _selectedDiscount = 10.0;
-
-  // Modul de reducere: false = Dropdown (preset), true = Manual (TextField)
   bool _useCustomDiscount = false;
 
-  // Valori de ieșire (Output)
   double _discountAmount = 0.0;
   double _finalPrice = 0.0;
   bool _calculated = false;
 
   void _calculateDiscount() {
-    // Preluăm prețul din TextField
     double price = double.tryParse(_priceController.text) ?? 0.0;
 
-    // Determinăm procentul de reducere folosit
     double discountPercent = 0.0;
     if (_useCustomDiscount) {
       discountPercent = double.tryParse(_customDiscountController.text) ?? 0.0;
@@ -58,7 +49,6 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
       discountPercent = _selectedDiscount;
     }
 
-    // Calculăm valoarea reducerii și prețul final
     setState(() {
       _discountAmount = (price * discountPercent) / 100;
       _finalPrice = price - _discountAmount;
@@ -83,9 +73,8 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Input 1: Preț inițial (TextField)
             TextField(
               controller: _priceController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -97,7 +86,6 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
             ),
             const SizedBox(height: 20),
 
-            // UI Control: RadioButtons
             const Text(
               'Selectează modul de reducere:',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -105,38 +93,40 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
             Row(
               children: [
                 Expanded(
-                  child: RadioListTile<bool>(
+                  child: ListTile(
                     title: const Text('Presetat'),
-                    value: false,
-                    groupValue: _useCustomDiscount,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _useCustomDiscount = value!;
-                      });
-                    },
+                    leading: Radio<bool>(
+                      value: false,
+                      groupValue: _useCustomDiscount,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _useCustomDiscount = value!;
+                        });
+                      },
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: RadioListTile<bool>(
+                  child: ListTile(
                     title: const Text('Manual'),
-                    value: true,
-                    groupValue: _useCustomDiscount,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _useCustomDiscount = value!;
-                      });
-                    },
+                    leading: Radio<bool>(
+                      value: true,
+                      groupValue: _useCustomDiscount,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _useCustomDiscount = value!;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
 
-            // Switch între Dropdown și TextField manual în funcție de alegere
             if (!_useCustomDiscount)
-            // UI Control: DropdownButton
               DropdownButtonFormField<double>(
-                value: _selectedDiscount,
+                initialValue: _selectedDiscount,
                 decoration: const InputDecoration(
                   labelText: 'Procent reducere predefinit',
                   border: OutlineInputBorder(),
@@ -157,7 +147,6 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
                 },
               )
             else
-            // Input 2: Procent reducere manual (TextField)
               TextField(
                 controller: _customDiscountController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -170,7 +159,6 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
 
             const SizedBox(height: 24),
 
-            // UI Control: ElevatedButton (Calculează)
             ElevatedButton(
               onPressed: _calculateDiscount,
               style: ElevatedButton.styleFrom(
@@ -186,7 +174,6 @@ class _DiscountCalculatorPageState extends State<DiscountCalculatorPage> {
 
             const SizedBox(height: 30),
 
-            // Output: Afișare rezultate (Text)
             if (_calculated)
               Card(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
